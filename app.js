@@ -1,0 +1,12 @@
+async function playVideoFromCamera() {
+    try {
+        const constraints = {'video': true, 'audio': {'echoCancellation': true}};
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const videoElement = document.querySelector('video#localVideo');
+        videoElement.srcObject = stream;
+    } catch(error) {
+        console.error('Error opening video camera.', error);
+    }
+}
+
+playVideoFromCamera()
