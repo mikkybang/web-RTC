@@ -10,6 +10,10 @@ const io: SocketIOServer = SocketIO(server)
 
 io.on("connection", (socket) => {
     console.log("Socket connected")
+
+    socket.on('test', (data) => {
+        console.log("test", data, socket.id)
+    })
 })
 
 app.use(express.static(path.join(__dirname, "../client")));

@@ -18,6 +18,14 @@ async function playVideoFromCamera() {
 
 playVideoFromCamera();
 
-this.io.on("connection", socket => {
+console.log(location)
+
+const socket = io.connect(location.host);
+
+socket.on("connect", socket => {
   console.log("Client socket connected")
 })
+
+socket.emit("test", {
+  to: "to"
+});
