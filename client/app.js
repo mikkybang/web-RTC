@@ -1,3 +1,5 @@
+const { RTCPeerConnection, RTCSessionDescription } = window;
+
 async function playVideoFromCamera() {
   try {
     const constraints = { video: true, audio: { echoCancellation: true } };
@@ -59,8 +61,6 @@ function createUserItemContainer(socketId) {
   userContainerEl.setAttribute("id", socketId);
   usernameEl.setAttribute("class", "username");
   usernameEl.innerHTML = `Socket: ${socketId}`;
-  
-  console.log(socketId)
   userContainerEl.appendChild(usernameEl);
   
   userContainerEl.addEventListener("click", () => {
@@ -74,7 +74,13 @@ function createUserItemContainer(socketId) {
  }
 
  async function callUser(socketId){
-  return
+  const offer = await peerConnection.createOffer();
+  await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
+  
+  socket.emit("call-user", {
+    offer,
+    to: socketId
+  });
  }
 
  async function  unselectUsersFromList(){
