@@ -70,10 +70,10 @@ function createUserItemContainer(socketId) {
   userContainerEl.appendChild(usernameEl);
   
   userContainerEl.addEventListener("click", () => {
-    // unselectUsersFromList();
-    // userContainerEl.setAttribute("class", "active-user active-user--selected");
-    // const talkingWithInfo = document.getElementById("talking-with-info");
-    // talkingWithInfo.innerHTML = `Talking with: "Socket: ${socketId}"`;
+    unselectUsersFromList();
+    userContainerEl.setAttribute("class", "active-user active-user--selected");
+    const talkingWithInfo = document.getElementById("talking-with-info");
+    talkingWithInfo.innerHTML = `Talking with: "Socket: ${socketId}"`;
     callUser(socketId);
   });
   return userContainerEl;
@@ -90,7 +90,13 @@ async function callUser(socketId) {
 }
 
 async function unselectUsersFromList() {
-  return;
+  const alreadySelectedUser = document.querySelectorAll(
+    ".active-user.active-user--selected"
+  );
+
+  alreadySelectedUser.forEach(el => {
+    el.setAttribute("class", "active-user");
+  });
 }
 socket.on("call-made", (data) => {
   if (getCalled) {
@@ -119,3 +125,26 @@ socket.on("call-made", (data) => {
   });
   getCalled = true;
 })
+
+socket.on("answer-made", async data => {
+  await peerConnection.setRemoteDescription(
+    new RTCSessionDescription(data.answer)
+  );
+
+  if (!isAlreadyCalling) {
+    callUser(data.socket);
+    isAlreadyCalling = true;
+  }
+});
+
+socket.on("call-rejected", data => {
+  alert(`User: "Socket: ${data.socket}" rejected your call.`);
+  unselectUsersFromList();
+});
+
+peerConnection.ontrack = function({ streams: [stream] }) {
+  const remoteVideo = document.getElementById("remote-video");
+  if (remoteVideo) {
+    remoteVideo.srcObject = stream;
+  }
+};
