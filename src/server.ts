@@ -30,14 +30,22 @@ io.on("connection", (socket) => {
         });
     }
 
+
+    socket.on("call-user", data => {
+        socket.to(data.to).emit("call-made", {
+            offer: data.offer,
+            socket: socket.id
+        });
+    });
+
     socket.on("disconnect", () => {
         activeSockets = activeSockets.filter(
-          existingSocket => existingSocket !== socket.id
+            existingSocket => existingSocket !== socket.id
         );
         socket.broadcast.emit("remove-user", {
-          socketId: socket.id
+            socketId: socket.id
         });
-      });
+    });
 
 
 
