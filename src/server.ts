@@ -38,11 +38,6 @@ io.on("connection", (socket) => {
           socketId: socket.id
         });
       });
-      
-
-    socket.on('test', (data) => {
-        console.log("test", data, socket.id)
-    })
 
 
 

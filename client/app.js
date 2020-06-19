@@ -37,6 +37,46 @@ socket.on("update-user-list", ({ users }) => {
   }
  });
 
-socket.emit("test", {
-  to: "to"
-});
+
+function updateUserList(socketIds) {
+  const activeUserContainer = document.getElementById("active-user-container");
+  
+  socketIds.forEach(socketId => {
+    const alreadyExistingUser = document.getElementById(socketId);
+    if (!alreadyExistingUser) {
+      const userContainerEl = createUserItemContainer(socketId);
+      activeUserContainer.appendChild(userContainerEl);
+    }
+  });
+}
+
+function createUserItemContainer(socketId) {
+  const userContainerEl = document.createElement("div");
+  
+  const usernameEl = document.createElement("p");
+  
+  userContainerEl.setAttribute("class", "active-user");
+  userContainerEl.setAttribute("id", socketId);
+  usernameEl.setAttribute("class", "username");
+  usernameEl.innerHTML = `Socket: ${socketId}`;
+  
+  console.log(socketId)
+  userContainerEl.appendChild(usernameEl);
+  
+  userContainerEl.addEventListener("click", () => {
+    unselectUsersFromList();
+    userContainerEl.setAttribute("class", "active-user active-user--selected");
+    const talkingWithInfo = document.getElementById("talking-with-info");
+    talkingWithInfo.innerHTML = `Talking with: "Socket: ${socketId}"`;
+    callUser(socketId);
+  }); 
+  return userContainerEl;
+ }
+
+ async function callUser(socketId){
+  return
+ }
+
+ async function  unselectUsersFromList(){
+  return
+ };
