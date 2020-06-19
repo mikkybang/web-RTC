@@ -69,7 +69,7 @@ app.use(express.static(path.join(__dirname, "../client")));
 
 
 //Port
-app.set('port', 9090);
+app.set('port', process.env.PORT ||9090);
 //server code
 server.listen(app.get('port'), async () => {
     console.log(`running → PORT ${app.get('port')}`);
