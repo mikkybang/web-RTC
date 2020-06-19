@@ -18,13 +18,24 @@ async function playVideoFromCamera() {
 
 playVideoFromCamera();
 
-console.log(location)
 
 const socket = io.connect(location.host);
 
 socket.on("connect", socket => {
   console.log("Client socket connected")
 })
+
+socket.on("update-user-list", ({ users }) => {
+  updateUserList(users);
+ });
+  
+ socket.on("remove-user", ({ socketId }) => {
+  const elToRemove = document.getElementById(socketId);
+  
+  if (elToRemove) {
+    elToRemove.remove();
+  }
+ });
 
 socket.emit("test", {
   to: "to"
