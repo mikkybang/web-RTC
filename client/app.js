@@ -7,26 +7,6 @@ let getCalled = false;
 
 const existingCalls = [];
 
-// async function playVideoFromCamera() {
-//   try {
-//     const constraints = { video: true, audio: { echoCancellation: true } };
-//     const stream = await navigator.mediaDevices.getUserMedia(constraints);
-//     // const constraints = {
-//     //   video: {
-//     //     cursor: "always" | "motion" | "never",
-//     //     displaySurface: "application" | "browser" | "monitor" | "window",
-//     //   },
-//     // };
-//     // const stream = await navigator.mediaDevices.getDisplayMedia(constraints);
-//     const videoElement = document.querySelector("video#localVideo");
-//     videoElement.srcObject = stream;
-//   } catch (error) {
-//     console.error("Error opening video camera.", error);
-//   }
-// }
-
-// playVideoFromCamera();
-
 const socket = io.connect(location.host);
 
 socket.on("connect", (socket) => {
@@ -79,7 +59,8 @@ function createUserItemContainer(socketId) {
 }
 
 async function callUser(socketId) {
-  const offer = await peerConnection.createOffer();
+  const configuration = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]}
+  const offer = await peerConnection.createOffer(configuration);
   await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
 
   socket.emit("call-user", {
@@ -144,23 +125,56 @@ socket.on("call-rejected", (data) => {
 peerConnection.ontrack = function ({ streams: [stream] }) {
   const remoteVideo = document.getElementById("remote-video");
   if (remoteVideo) {
+    console.log("Remote", stream)
     remoteVideo.srcObject = stream;
   }
 };
 
-navigator.getUserMedia(
-  { video: true, audio: true },
-  (stream) => {
-    const localVideo = document.getElementById("local-video");
-    if (localVideo) {
-      localVideo.srcObject = stream;
+async function playVideoFromCamera() {
+  try {
+    const constraints = { video: true, audio: { echoCancellation: true } };
+    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+    // const constraints = {
+    //   video: {
+    //     cursor: "always" | "motion" | "never",
+    //     displaySurface: "application" | "browser" | "monitor" | "window",
+    //   },
+    // };
+    // const stream = await navigator.mediaDevices.getDisplayMedia(constraints);
+    const videoElement = document.querySelector("video#local-video");
+    if (videoElement) {
+      console.log(stream)
+      videoElement.srcObject = stream;
     }
-
-    stream
-      .getTracks()
-      .forEach((track) => peerConnection.addTrack(track, stream));
-  },
-  (error) => {
-    console.warn(error.message);
+    stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream))
+  } catch (error) {
+    console.error("Error opening video camera.", error);
   }
-);
+}
+
+ playVideoFromCamera();
+
+// try {
+//   const constraints = { video: true, audio: { echoCancellation: true } };
+//   const stream = async () => await navigator.mediaDevices.getDisplayMedia(constraints);
+//   const localVideo = document.getElementById("local-video");
+//   localVideo.srcObject = stream;
+//   stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream));
+// } catch (error) {
+//   console.log(error)
+// }
+// navigator.getUserMedia(
+//   { video: true, audio: true },
+//   (stream) => {
+//     const localVideo = document.getElementById("local-video");
+//     if (localVideo) {
+//       localVideo.srcObject = stream;
+//     }
+//     stream
+//       .getTracks()
+//       .forEach((track) => peerConnection.addTrack(track, stream));
+//   },
+//   (error) => {
+//     console.warn(error.message);
+//   }
+// );
