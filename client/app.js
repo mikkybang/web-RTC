@@ -134,13 +134,6 @@ async function playVideoFromCamera() {
   try {
     const constraints = { video: true, audio: { echoCancellation: true } };
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
-    // const constraints = {
-    //   video: {
-    //     cursor: "always" | "motion" | "never",
-    //     displaySurface: "application" | "browser" | "monitor" | "window",
-    //   },
-    // };
-    // const stream = await navigator.mediaDevices.getDisplayMedia(constraints);
     const videoElement = document.querySelector("video#local-video");
     if (videoElement) {
       console.log(stream)
