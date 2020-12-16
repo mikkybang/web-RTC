@@ -13,7 +13,8 @@ socket.on("connect", (socket) => {
   console.log("Client socket connected");
 });
 
-socket.on("update-user-list", ({ users }) => {
+socket.on("users", ({ users }) => {
+  console.log(users);
   updateUserList(users);
 });
 
@@ -59,7 +60,9 @@ function createUserItemContainer(socketId) {
 }
 
 async function callUser(socketId) {
-  const configuration = {'iceServers': [{'urls': 'stun:stun.l.google.com:19302'}]}
+  const configuration = {
+    iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+  };
   const offer = await peerConnection.createOffer(configuration);
   await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
 
@@ -124,7 +127,7 @@ socket.on("call-rejected", (data) => {
 peerConnection.ontrack = function ({ streams: [stream] }) {
   const remoteVideo = document.getElementById("remote-video");
   if (remoteVideo) {
-    console.log("Remote", stream)
+    console.log("Remote", stream);
     remoteVideo.srcObject = stream;
   }
 };
@@ -135,13 +138,15 @@ async function playVideoFromCamera() {
     const stream = await navigator.mediaDevices.getUserMedia(constraints);
     const videoElement = document.querySelector("video#local-video");
     if (videoElement) {
-      console.log(stream)
+      console.log(stream);
       videoElement.srcObject = stream;
     }
-    stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream))
+    stream
+      .getTracks()
+      .forEach((track) => peerConnection.addTrack(track, stream));
   } catch (error) {
     console.error("Error opening video camera.", error);
   }
 }
 
- playVideoFromCamera();
+playVideoFromCamera();

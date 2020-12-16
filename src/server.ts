@@ -21,7 +21,7 @@ io.on("connection", (socket) => {
         console.log("YourId", activeSockets)
         socket.emit("yourId", socket.id);
 
-        socket.broadcast.emit("users", {
+        io.sockets.emit("users", {
             users: activeSockets
         });
     }
@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
 
 })
 
-app.use(express.static(path.join(__dirname, "../client/build")));
+app.use(express.static(path.join(__dirname, "../legacy-client")));
 
 
 
