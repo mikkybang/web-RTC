@@ -88,7 +88,6 @@ socket.on("call-made", async (data) => {
       socket.emit("reject-call", {
         from: data.socket,
       });
-
       return;
     }
   }
@@ -146,28 +145,3 @@ async function playVideoFromCamera() {
 }
 
  playVideoFromCamera();
-
-// try {
-//   const constraints = { video: true, audio: { echoCancellation: true } };
-//   const stream = async () => await navigator.mediaDevices.getDisplayMedia(constraints);
-//   const localVideo = document.getElementById("local-video");
-//   localVideo.srcObject = stream;
-//   stream.getTracks().forEach((track) => peerConnection.addTrack(track, stream));
-// } catch (error) {
-//   console.log(error)
-// }
-// navigator.getUserMedia(
-//   { video: true, audio: true },
-//   (stream) => {
-//     const localVideo = document.getElementById("local-video");
-//     if (localVideo) {
-//       localVideo.srcObject = stream;
-//     }
-//     stream
-//       .getTracks()
-//       .forEach((track) => peerConnection.addTrack(track, stream));
-//   },
-//   (error) => {
-//     console.warn(error.message);
-//   }
-// );

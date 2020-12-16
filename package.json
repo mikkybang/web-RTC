@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "express": "^4.17.1",
+    "simple-peer": "^9.9.3",
     "socket.io": "^2.3.0"
   }
 }
