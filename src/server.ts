@@ -11,7 +11,7 @@ var activeSockets: String[] = [];
 
 io.on("connection", (socket) => {
     console.log("Socket connected")
-
+    console.log(socket.id)
     const existingSocket = activeSockets.find(
         existingSocket => existingSocket === socket.id
     );
