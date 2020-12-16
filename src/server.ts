@@ -12,16 +12,13 @@ var activeSockets: String[] = [];
 io.on("connection", (socket) => {
     console.log("Socket connected")
     console.log(socket.id)
-    console.log(activeSockets)
     const existingSocket = activeSockets.find(
         existingSocket => existingSocket == socket.id
     );
 
-    console.log(existingSocket);
-
     if (!existingSocket) {
         activeSockets.push(socket.id);
-
+        console.log("YourId", activeSockets)
         socket.emit("yourId", socket.id);
 
         socket.broadcast.emit("users", {
@@ -51,6 +48,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
+        console.log("disconecting")
         activeSockets = activeSockets.filter(
             existingSocket => existingSocket !== socket.id
         );

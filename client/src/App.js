@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import logo from "./logo.svg";
 import Peer from "simple-peer";
-import io from "socket.io-client";
 import "./App.css";
 
-const SOCKETIO = "http://localhost:9090";
+import { socketConnection } from "./socket";
 
 function App() {
   const [stream, setSteam] = useState();
   const [yourId, setYourId] = useState("");
-  const [users, setUsers] = useState({});
+  const [users, setUsers] = useState([]);
   const [receivingCall, setRecevingCall] = useState(false);
   const [caller, setCaller] = useState("");
   const [callerSignal, setCallerSignal] = useState();
@@ -18,9 +17,9 @@ function App() {
   const userVideo = useRef();
   const partnerVideo = useRef();
   const socket = useRef();
-  socket.current = io(SOCKETIO);
 
   useEffect(() => {
+    socket.current = socketConnection;
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -30,8 +29,13 @@ function App() {
         }
       })
       .catch((err) => {
-        alert("Could not get media stream");
+        console.log("Could not get media stream");
       });
+
+    socket.current.on("connect", (socket) => {
+      console.log("Client socket connected");
+    });
+
     socket.current.on("yourId", (id) => {
       setYourId(id);
     });
@@ -64,7 +68,7 @@ function App() {
         {PartnerVideo}
       </div>
 
-      {Object.keys(users).map((key) => {
+      {users.map((key) => {
         if (key == yourId) {
           return null;
         }
