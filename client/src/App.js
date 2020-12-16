@@ -18,9 +18,9 @@ function App() {
   const userVideo = useRef();
   const partnerVideo = useRef();
   const socket = useRef();
+  socket.current = io(SOCKETIO);
 
   useEffect(() => {
-    socket.current = io(SOCKETIO);
     navigator.mediaDevices
       .getUserMedia({ video: true, audio: true })
       .then((stream) => {
@@ -32,6 +32,14 @@ function App() {
       .catch((err) => {
         alert("Could not get media stream");
       });
+    socket.current.on("yourId", (id) => {
+      setYourId(id);
+    });
+
+    socket.current.on("users", (data) => {
+      console.log(data.users);
+      setUsers(data.users);
+    });
   }, []);
 
   let UserVideo;
@@ -40,13 +48,28 @@ function App() {
   }
   let PartnerVideo;
   if (callAccepted) {
-    PartnerVideo = <video playsInline ref={partnerVideo} autoPlay></video>;
+    PartnerVideo = (
+      <video playsInline muted ref={partnerVideo} autoPlay></video>
+    );
   }
+
+  const callPeer = (key) => {};
+
+  const acceptCall = () => {};
 
   return (
     <div className="App">
-      {UserVideo}
-      {PartnerVideo}
+      <div className="video-wrapper">
+        {UserVideo}
+        {PartnerVideo}
+      </div>
+
+      {Object.keys(users).map((key) => {
+        if (key == yourId) {
+          return null;
+        }
+        return <button> call {key} </button>;
+      })}
     </div>
   );
 }

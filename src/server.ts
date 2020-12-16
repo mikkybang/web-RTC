@@ -12,34 +12,33 @@ var activeSockets: String[] = [];
 io.on("connection", (socket) => {
     console.log("Socket connected")
     console.log(socket.id)
+    console.log(activeSockets)
     const existingSocket = activeSockets.find(
-        existingSocket => existingSocket === socket.id
+        existingSocket => existingSocket == socket.id
     );
+
+    console.log(existingSocket);
 
     if (!existingSocket) {
         activeSockets.push(socket.id);
 
-        socket.emit("update-user-list", {
-            users: activeSockets.filter(
-                existingSocket => existingSocket !== socket.id
-            )
-        });
+        socket.emit("yourId", socket.id);
 
-        socket.broadcast.emit("update-user-list", {
-            users: [socket.id]
+        socket.broadcast.emit("users", {
+            users: activeSockets
         });
     }
 
 
     socket.on("call-user", data => {
-        socket.to(data.to).emit("call-made", {
+        io.to(data.to).emit("call-made", {
             offer: data.offer,
             socket: socket.id
         });
     });
 
     socket.on("make-answer", data => {
-        socket.to(data.to).emit("answer-made", {
+        io.to(data.to).emit("answer-made", {
             socket: socket.id,
             answer: data.answer
         });
